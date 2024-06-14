@@ -10,7 +10,7 @@ This fork now uses [YT-DLP](https://github.com/yt-dlp/yt-dlp) configuration and 
 2. Navigate to extracted or cloned repository, e.g. `cd ~/youtube-playlist-archiver`.
 3. Install [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 4. Install [aria2](https://aria2.github.io/) && [ffmpeg](http://www.ffmpeg.org/).
-5. Run `./download.sh`.
+5. Run `./download.sh` for \*NIX or `./download.bat` for Windows.
 6. Enter youtube playlist URL.
 7. Wait...
 
