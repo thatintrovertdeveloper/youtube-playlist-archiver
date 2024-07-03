@@ -27,21 +27,25 @@ select format in "${formats[@]}"; do
     "video")
       printf "Downloading video\n"
       yt-dlp --config-location "$(dirname "$0")/config/video.conf"
+      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
       exit 0
       ;;
     "audio")
       printf "Downloading audio\n"
       yt-dlp --config-location "$(dirname "$0")/config/audio.conf"
+      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
       exit 0
       ;;
     "playlist")
       printf "Downloading video playlist\n"
       yt-dlp --config-location "$(dirname "$0")/config/video-playlist.conf"
+      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
       exit 0
       ;;
     "audio-playlist")
       printf "Downloading audio playlist\n"
       yt-dlp --config-location "$(dirname "$0")/config/audio-playlist.conf"
+      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
       exit 0
       ;;
     *)
