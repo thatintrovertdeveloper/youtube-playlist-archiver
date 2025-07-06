@@ -1,13 +1,10 @@
 #!/bin/bash
 
 # Create a file if youtube-dl-playlists.txt does not exist
-if [[ ! -f youtube-dl-playlists.txt ]]; then
-  touch youtube-dl-playlists.txt
-fi
+[[ -f youtube-dl-playlists.txt ]] || touch youtube-dl-playlists.txt
 
 # Get input from user
-printf "Enter URL: "
-read -r videourl
+read -rp "Enter URL: " videourl
 
 # Check if videourl is already in the file
 if grep -Fxq "$videourl" youtube-dl-playlists.txt; then
@@ -16,36 +13,31 @@ else
   printf "%s\n" "$videourl" >> youtube-dl-playlists.txt
 fi
 
-# Execute command
+# Ensure youtube-dl-archive.txt exists
+[[ -f $(dirname "$0")/youtube-dl-archive.txt ]] || touch "$(dirname "$0")/youtube-dl-archive.txt"
+
+# Menu options
 prompt="Choose an option:"
 formats=("video" "audio" "playlist" "audio-playlist")
-
 PS3="$prompt "
 
 select format in "${formats[@]}"; do
   case $format in
-    "video")
-      printf "Downloading video\n"
-      yt-dlp --config-location "$(dirname "$0")/config/video.conf"
-      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
-      exit 0
-      ;;
-    "audio")
-      printf "Downloading audio\n"
-      yt-dlp --config-location "$(dirname "$0")/config/audio.conf"
-      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
-      exit 0
-      ;;
-    "playlist")
-      printf "Downloading video playlist\n"
-      yt-dlp --config-location "$(dirname "$0")/config/video-playlist.conf"
-      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
-      exit 0
-      ;;
-    "audio-playlist")
-      printf "Downloading audio playlist\n"
-      yt-dlp --config-location "$(dirname "$0")/config/audio-playlist.conf"
-      sed i -e '$ s/$/ '"$format"' /' "$(dirname "$0)/youtube-dl-archive.txt)"
+    "video"|"audio"|"playlist"|"audio-playlist")
+      printf "Downloading %s\n" "$format"
+      case $format in
+        "video") conf="video.conf" ;;
+        "audio") conf="audio.conf" ;;
+        "playlist") conf="video-playlist.conf" ;;
+        "audio-playlist") conf="audio-playlist.conf" ;;
+      esac
+      config_path="$(dirname "$0")/config/$conf"
+      if [[ ! -f "$config_path" ]]; then
+        printf "Error: config file %s does not exist\n" "$config_path"
+        exit 1
+      fi
+      yt-dlp --config-location "$config_path"
+      sed -i '' -e '$s/$/ '"$format"'/' "$(dirname "$0")/youtube-dl-archive.txt"
       exit 0
       ;;
     *)
@@ -53,4 +45,5 @@ select format in "${formats[@]}"; do
       exit 1
       ;;
   esac
+  break
 done
